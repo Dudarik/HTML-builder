@@ -2,6 +2,7 @@ const { stdout, stdin } = process;
 
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 const FILE_NAME = 'output.txt';
 const PATH = path.join(__dirname, FILE_NAME);
@@ -41,6 +42,7 @@ stdin.on('data', (data) => {
 });
 
 process.on('SIGINT', () => {
+  readline.clearLine(process.stdout, 0);
   console.log('\n' + BYE_STR);
   process.exit();
 });
