@@ -36,7 +36,7 @@ const copyFiles = async (srcPath, dstPath) => {
   console.log('\n# Create target folder, if not exist...');
 
   if (targetDir) {
-    clearDir(targetDir);
+    await clearDir(targetDir);
 
     console.log('# Clear target folder...');
 
