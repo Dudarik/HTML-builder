@@ -33,7 +33,7 @@ const clearDir = async (dirname) => {
 
 const copyFiles = async (srcPath, dstPath) => {
   const targetDir = await createDir(dstPath);
-  console.log('# Create target folder, if not exist...');
+  console.log('\n# Create target folder, if not exist...');
 
   if (targetDir) {
     clearDir(targetDir);
@@ -53,7 +53,7 @@ const copyFiles = async (srcPath, dstPath) => {
           console.error(error);
         }
       }
-      console.log(`# Process end! GLHF! Files copy to: ${dstPath}`);
+      console.log(`# Process end! GLHF! Files copy to: ${dstPath}\n`);
     }
   }
 };
