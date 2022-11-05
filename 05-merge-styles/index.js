@@ -56,5 +56,4 @@ const createCssBundle = async (srcPath, dstPath, bundleName) => {
   }
 };
 
-module.exports = { createCssBundle };
 createCssBundle(SRC_PATH, DST_PATH, BUNDLE_NAME);
