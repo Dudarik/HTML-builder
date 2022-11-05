@@ -1,7 +1,7 @@
 const path = require('path');
 
-const { createReadStream, createWriteStream, rm } = require('fs');
-const { readdir } = require('fs/promises');
+const { createReadStream, createWriteStream } = require('fs');
+const { readdir, rm } = require('fs/promises');
 const { pipeline } = require('stream');
 
 const SRC_PATH = path.join(__dirname, 'styles');
@@ -23,20 +23,36 @@ const getCssFileNames = async (srcPath) => {
 };
 
 const createBundle = async (srcPath, dstPath, bundleName) => {
-  rm(path.join(dstPath, bundleName), { force: true });
+  console.log(`\n# Delete file '${dstPath}/${bundleName}', if exist...`);
 
+  await rm(path.join(dstPath, bundleName), { force: true });
   const files = await getCssFileNames(srcPath);
 
+  console.log(`# Read target folder '${srcPath}/'`);
+
+  console.log(
+    `# We have ${files.length} files to merge: \n\n\t${files.join('\n\t')}\n`
+  );
+
   if (files) {
+    console.log(
+      `# Merge files from folder '${srcPath}/' to '${dstPath}/${bundleName}'`
+    );
+
     for (const file of files) {
       const input = createReadStream(file, UTF8);
       const output = createWriteStream(path.join(dstPath, bundleName), {
         flags: 'a',
       });
+
       pipeline(input, output, (err) => {
-        if (err) console.error(err);
+        if (err) console.error('this error', err);
       });
     }
+
+    console.log(
+      `# Process successfully end! GLHF! Files merge to: '${dstPath}/${bundleName}'\n`
+    );
   }
 };
 
