@@ -22,7 +22,7 @@ const getCssFileNames = async (srcPath) => {
   return false;
 };
 
-const createBundle = async (srcPath, dstPath, bundleName) => {
+const createCssBundle = async (srcPath, dstPath, bundleName) => {
   console.log(`\n# Delete file '${dstPath}/${bundleName}', if exist...`);
 
   await rm(path.join(dstPath, bundleName), { force: true });
@@ -56,4 +56,5 @@ const createBundle = async (srcPath, dstPath, bundleName) => {
   }
 };
 
-createBundle(SRC_PATH, DST_PATH, BUNDLE_NAME);
+module.exports = { createCssBundle };
+createCssBundle(SRC_PATH, DST_PATH, BUNDLE_NAME);
