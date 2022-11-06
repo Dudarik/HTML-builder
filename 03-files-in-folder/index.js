@@ -18,17 +18,14 @@ const getFilesInfo = async (filePath) => {
   try {
     let files = await readdir(filePath, { withFileTypes: true });
 
-    files = files.filter((file) => {
-      const fileType = Object.getOwnPropertySymbols(file);
-      return file[fileType[0]] === 1;
-    });
+    files = files.filter((file) => file.isFile());
 
     console.log('\nFILENAME    EXT      SIZE');
     console.log('--------------------------');
 
     files.forEach(async (f) => {
       f.info = await stat(path.join(filePath, f.name));
-      console.log(`${formatFileName(f.name)} -  ${f.info.size} byte`);
+      console.log(`${formatFileName(f.name)} -  ${f.info.size} bytes`);
     });
   } catch (error) {
     console.error(error);
