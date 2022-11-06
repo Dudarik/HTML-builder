@@ -67,22 +67,10 @@ const getFileNames = async (srcPath, ext) => {
 };
 
 const createCssBundle = async (srcPath, dstPath, bundleName) => {
-  console.log(`\n# Delete file '${dstPath}/${bundleName}', if exist...`);
-
   await rm(path.join(dstPath, bundleName), { force: true });
   const files = await getFileNames(srcPath, '.css');
 
-  console.log(`# Read target folder '${srcPath}/'`);
-
-  console.log(
-    `# We have ${files.length} files to merge: \n\n\t${files.join('\n\t')}\n`
-  );
-
   if (files) {
-    console.log(
-      `# Merge files from folder '${srcPath}/' to '${dstPath}/${bundleName}'`
-    );
-
     for (const file of files) {
       const input = createReadStream(file, UTF8);
       const output = createWriteStream(path.join(dstPath, bundleName), {
@@ -93,10 +81,6 @@ const createCssBundle = async (srcPath, dstPath, bundleName) => {
         if (err) console.error('this error', err);
       });
     }
-
-    console.log(
-      `# Process successfully end! Files merge to: '${dstPath}/${bundleName}'\n`
-    );
     return true;
   }
   return false;
