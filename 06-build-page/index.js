@@ -1,8 +1,8 @@
 const path = require('path');
 
-const { createReadStream, createWriteStream } = require('fs');
+const { createWriteStream } = require('fs');
 const { readdir, mkdir, rm, copyFile, readFile } = require('fs/promises');
-const { pipeline } = require('stream');
+// const { pipeline } = require('stream');
 
 const SRC_PATH = path.join(__dirname);
 const DST_PATH = path.join(__dirname, 'project-dist');
@@ -72,15 +72,20 @@ const createCssBundle = async (srcPath, dstPath, bundleName) => {
 
   if (files) {
     for (const file of files) {
-      const input = createReadStream(file, UTF8);
+      let input = await readFile(file, UTF8);
+      input += '\n';
+
+      // input.pipe(output);
+      // pipeline(input, output, '\n', (err) => {
+      //   if (err) console.error('this error', err);
+      // });
       const output = createWriteStream(path.join(dstPath, bundleName), {
         flags: 'a',
       });
 
-      pipeline(input, output, (err) => {
-        if (err) console.error('this error', err);
-      });
+      output.write(input);
     }
+
     return true;
   }
   return false;
