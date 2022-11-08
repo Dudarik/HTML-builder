@@ -106,7 +106,17 @@ const createCssBundle = async (srcPath, dstPath, bundleName, tplPath) => {
         input = await readFile(file, UTF8);
         input += '\n';
       } catch (error) {
-        console.log('');
+        console.log(
+          `\n У тебя в шаблоне "${path.basename(
+            tplPath
+          )}", есть тэг {{${path.basename(
+            file,
+            path.extname(file)
+          )}}}, но ты забыл подключить к нему стили. Пожалуйста скопируй файл ${path.basename(
+            file
+          )} в ${srcPath} и запусти скрипт снова! \n`
+        );
+        return;
       }
 
       // input.pipe(output);
@@ -139,12 +149,18 @@ const createHTML = async (
     // await rm(path.join(dstPath, mainFilename), { force: true });
 
     for (const file of files) {
+      // console.log(file);
       const component = await readFile(file, UTF8);
       const componentName = path.basename(file, path.extname(file));
 
       htmlTpl = htmlTpl.replaceAll(`{{${componentName}}}`, component);
     }
+    const removeOther = async () => {
+      const regExp = /{{[a-zA-Z0-9_]+}}/gim;
+      htmlTpl = htmlTpl.replaceAll(regExp, '');
+    };
 
+    await removeOther();
     const output = createWriteStream(path.join(dstPath, mainFilename));
     output.write(htmlTpl);
 
