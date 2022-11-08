@@ -66,14 +66,48 @@ const getFileNames = async (srcPath, ext) => {
   return false;
 };
 
-const createCssBundle = async (srcPath, dstPath, bundleName) => {
+const getFileNamesFromTpl = (srcPath, tpl) => {
+  const regExp = /{{[a-zA-Z0-9_]+}}/gim;
+  const res = [];
+
+  tpl = tpl.match(regExp).map((item) =>
+    path.join(
+      srcPath,
+      item
+        .split('')
+        .filter((item) => item !== '{' && item !== '}')
+        .join('') + '.css'
+    )
+  );
+  for (let item of tpl) {
+    if (path.basename(item) === 'articles.css')
+      item = path.join(path.dirname(item), 'main.css');
+
+    if (res.includes(item)) continue;
+    res.push(item);
+  }
+  // console.log(res);
+  return res;
+};
+
+const createCssBundle = async (srcPath, dstPath, bundleName, tplPath) => {
   await rm(path.join(dstPath, bundleName), { force: true });
-  const files = await getFileNames(srcPath, '.css');
+
+  let htmlTpl = await readFile(path.join(srcPath, '..', tplPath), UTF8);
+
+  const files = getFileNamesFromTpl(path.join(srcPath), htmlTpl);
+
+  //const files = await getFileNames(srcPath, '.css');
 
   if (files) {
     for (const file of files) {
-      let input = await readFile(file, UTF8);
-      input += '\n';
+      let input;
+      try {
+        input = await readFile(file, UTF8);
+        input += '\n';
+      } catch (error) {
+        console.log('');
+      }
 
       // input.pipe(output);
       // pipeline(input, output, '\n', (err) => {
@@ -100,6 +134,7 @@ const createHTML = async (
 ) => {
   let htmlTpl = await readFile(path.join(srcPath, tplPath), UTF8);
   const files = await getFileNames(path.join(srcPath, componentsPath), '.html');
+
   if (htmlTpl && files) {
     // await rm(path.join(dstPath, mainFilename), { force: true });
 
@@ -134,7 +169,8 @@ const makeBundle = async (
   await createCssBundle(
     path.join(srcPath, stylesFolder),
     dstPath,
-    cssBundleName
+    cssBundleName,
+    htmlTplPath
   );
   await createHTML(srcPath, dstPath, htmlTplPath, componentsPath, mainFilename);
 };
